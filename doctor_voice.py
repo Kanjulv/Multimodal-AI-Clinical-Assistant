@@ -13,14 +13,14 @@ def text_to_speech_with_gtts_old(input_text, output_filepath):
     audioobj.save(output_filepath)
 
 
-input_text="Hi this is KJ!"
+input_text="Hi this is Ai with Hassan!"
 text_to_speech_with_gtts_old(input_text=input_text, output_filepath="gtts_testing.mp3")
 
 #Step1b: Setup Text to Speech–TTS–model with ElevenLabs
 import elevenlabs
 from elevenlabs.client import ElevenLabs
 
-ELEVENLABS_API_KEY=os.environ.get("ELEVENLABS_API_KEY")
+ELEVENLABS_API_KEY=os.environ.get("ELEVEN_API_KEY")
 
 def text_to_speech_with_elevenlabs_old(input_text, output_filepath):
     client=ElevenLabs(api_key=ELEVENLABS_API_KEY)
@@ -32,9 +32,10 @@ def text_to_speech_with_elevenlabs_old(input_text, output_filepath):
     )
     elevenlabs.save(audio, output_filepath)
 
-text_to_speech_with_elevenlabs_old(input_text, output_filepath="elevenlabs_testing.mp3") 
+#text_to_speech_with_elevenlabs_old(input_text, output_filepath="elevenlabs_testing.mp3") 
 
 #Step2: Use Model for Text output to Voice
+
 import subprocess
 import platform
 

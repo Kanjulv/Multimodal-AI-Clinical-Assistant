@@ -1,48 +1,46 @@
-# Step 0 - Load .env
-from dotenv import load_dotenv
-load_dotenv()
-
-# Step 1 - Setup GROQ API key
+#Step1: Setup GROQ API key
 import os
-GROQ_API_KEY = os.getenv("GROQ_API_KEY")
 
-# Step 2 - Convert image to required format
+GROQ_API_KEY=os.environ.get("GROQ_API_KEY")
+
+#Step2: Convert image to required format
 import base64
 
-image_path = "Acneimage.jpg"
-image_file = open(image_path, "rb")
-encoded_image = base64.b64encode(image_file.read()).decode('utf-8')
 
-# Step 3 - Setup Multimodal LLM
+#image_path="acne.jpg"
+
+def encode_image(image_path):   
+    image_file=open(image_path, "rb")
+    return base64.b64encode(image_file.read()).decode('utf-8')
+
+#Step3: Setup Multimodal LLM 
 from groq import Groq
 
-client = Groq()
-completion = client.chat.completions.create(
-    model="meta-llama/llama-4-maverick-17b-128e-instruct",
+query="Is there something wrong with my face?"
+model = "meta-llama/llama-4-scout-17b-16e-instruct"
+#model="llama-3.2-90b-vision-preview" #Deprecated
+
+def analyze_image_with_query(query, model, encoded_image):
+    client=Groq()  
     messages=[
-      {
-        "role": "user",
-        "content": [
-          {
-            "type": "text",
-            "text": "Is there anything wrong with my face?"
-          },
-          {
-            "type": "image_url",
-            "image_url": {
-              "url":f"data:image/jpeg;base64,{encoded_image}",
-            }
-          }
-        ]
-      },
-    ],
-    temperature=1.5,
-    max_completion_tokens=1024,
-    top_p=1,
-    stream=True,
-    stop=None,
-)
+        {
+            "role": "user",
+            "content": [
+                {
+                    "type": "text", 
+                    "text": query
+                },
+                {
+                    "type": "image_url",
+                    "image_url": {
+                        "url": f"data:image/jpeg;base64,{encoded_image}",
+                    },
+                },
+            ],
+        }]
+    chat_completion=client.chat.completions.create(
+        messages=messages,
+        model=model
+    )
 
-for chunk in completion:
-    print(chunk.choices[0].delta.content or "", end="")
-
+    return chat_completion.choices[0].message.content
